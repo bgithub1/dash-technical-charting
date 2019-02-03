@@ -22,6 +22,7 @@ from . import tools
 from . import factory
 from .valid import VALID_FIGURE_KWARGS, VALID_TRACES, OHLC_TRACES
 from .ta import *  # noqa : F405
+# from quantmod import ta  # noqa : F405
 
 
 class Chart(object):
@@ -1072,52 +1073,52 @@ class Chart(object):
             return py.iplot(figure, filename=filename)
 
 
-Chart.add_MA = add_MA  # noqa : F405
-Chart.add_SMA = add_SMA  # noqa : F405
-Chart.add_EMA = add_EMA  # noqa : F405
-Chart.add_WMA = add_WMA  # noqa : F405
-Chart.add_DEMA = add_DEMA  # noqa : F405
-Chart.add_TEMA = add_TEMA  # noqa : F405
-Chart.add_T3 = add_T3  # noqa : F405
-Chart.add_KAMA = add_KAMA  # noqa : F405
-Chart.add_TRIMA = add_TRIMA  # noqa : F405
-Chart.add_MAMA = add_MAMA  # noqa : F405
-Chart.add_MAVP = add_MAVP  # noqa : F405
+# Chart.add_MA = add_MA  # noqa : F405
+# Chart.add_SMA = add_SMA  # noqa : F405
+# Chart.add_EMA = add_EMA  # noqa : F405
+# Chart.add_WMA = add_WMA  # noqa : F405
+# Chart.add_DEMA = add_DEMA  # noqa : F405
+# Chart.add_TEMA = add_TEMA  # noqa : F405
+# Chart.add_T3 = add_T3  # noqa : F405
+# Chart.add_KAMA = add_KAMA  # noqa : F405
+# Chart.add_TRIMA = add_TRIMA  # noqa : F405
+# Chart.add_MAMA = add_MAMA  # noqa : F405
+# Chart.add_MAVP = add_MAVP  # noqa : F405
+# 
+# Chart.add_BBANDS = add_BBANDS  # noqa : F405
+# Chart.add_HT_TRENDLINE = add_HT_TRENDLINE  # noqa : F405, add_ht_trendline
+# Chart.add_MIDPOINT = add_MIDPOINT  # noqa : F405, add_midpoint
+# Chart.add_SAR = add_SAR  # noqa : F405
+# Chart.add_SAREXT = add_SAREXT  # noqa : F405
 
-Chart.add_BBANDS = add_BBANDS  # noqa : F405
-Chart.add_HT_TRENDLINE = add_HT_TRENDLINE  # noqa : F405, add_ht_trendline
-Chart.add_MIDPOINT = add_MIDPOINT  # noqa : F405, add_midpoint
-Chart.add_SAR = add_SAR  # noqa : F405
-Chart.add_SAREXT = add_SAREXT  # noqa : F405
 
-
-Chart.add_APO = add_APO  # noqa : F405, HL 0 (MACD no signal line)
-Chart.add_AROON = add_AROON  # noqa : F405,
-Chart.add_AROONOSC = add_AROONOSC  # noqa : F405, area (HL 0)
-Chart.add_BOP = add_BOP  # noqa : F405, smoothing, volume color (HL 0)
-Chart.add_CCI = add_CCI  # noqa : F405, band range color
-Chart.add_CMO = add_CMO  # noqa : F405, HL 0, HL +- 50
-Chart.add_ADX = add_ADX  # noqa : F405, ADX + +-DI, HL +20
-Chart.add_ADXR = add_ADXR  # noqa : F405, ADX + ADXR
-Chart.add_DX = add_DX  # noqa : F405,
-Chart.add_MINUS_DI = add_MINUS_DI  # noqa : F405
-Chart.add_PLUS_DI = add_PLUS_DI  # noqa : F405
-Chart.add_MINUS_DM = add_MINUS_DM  # noqa : F405
-Chart.add_PLUS_DM = add_PLUS_DM  # noqa : F405
-Chart.add_MACD = add_MACD  # noqa : F405
-Chart.add_MACDEXT = add_MACDEXT  # noqa : F405
-# Chart.add_MACDFIX = add_MACDEFIX  # noqa : F405, not present
-Chart.add_MFI = add_MFI  # noqa : F405, band range color, HL 20, HL 80
-Chart.add_MOM = add_MOM  # noqa : F405, (HL 0)
-Chart.add_PPO = add_PPO  # noqa : F405, PPO + Signal + Histogram
-Chart.add_ROC = add_ROC  # noqa : F405
-Chart.add_ROCP = add_ROCP  # noqa : F405
-Chart.add_ROCR = add_ROCR  # noqa : F405
-Chart.add_ROCR100 = add_ROCR100  # noqa : F405
-Chart.add_RSI = add_RSI  # noqa : F405, band range color, HL 30, HL 70
-Chart.add_STOCH = add_STOCH  # noqa : F405, HL 20, HL 80
-Chart.add_STOCHF = add_STOCHF  # noqa : F405
-Chart.add_STOCHRSI = add_STOCHRSI  # noqa : F405
-Chart.add_TRIX = add_TRIX  # noqa : F405, + Signal, area (HL 0)
-Chart.add_ULTOSC = add_ULTOSC  # noqa : F405, band range color, HL 30, HL 70
-Chart.add_WILLR = add_WILLR  # noqa : F405, band range color, HL 20, HL 80
+# Chart.add_APO = add_APO  # noqa : F405, HL 0 (MACD no signal line)
+# Chart.add_AROON = add_AROON  # noqa : F405,
+# Chart.add_AROONOSC = add_AROONOSC  # noqa : F405, area (HL 0)
+# Chart.add_BOP = add_BOP  # noqa : F405, smoothing, volume color (HL 0)
+# Chart.add_CCI = add_CCI  # noqa : F405, band range color
+# Chart.add_CMO = add_CMO  # noqa : F405, HL 0, HL +- 50
+# Chart.add_ADX = add_ADX  # noqa : F405, ADX + +-DI, HL +20
+# Chart.add_ADXR = add_ADXR  # noqa : F405, ADX + ADXR
+# Chart.add_DX = add_DX  # noqa : F405,
+# Chart.add_MINUS_DI = add_MINUS_DI  # noqa : F405
+# Chart.add_PLUS_DI = add_PLUS_DI  # noqa : F405
+# Chart.add_MINUS_DM = add_MINUS_DM  # noqa : F405
+# Chart.add_PLUS_DM = add_PLUS_DM  # noqa : F405
+# Chart.add_MACD = add_MACD  # noqa : F405
+# Chart.add_MACDEXT = add_MACDEXT  # noqa : F405
+# # Chart.add_MACDFIX = add_MACDEFIX  # noqa : F405, not present
+# Chart.add_MFI = add_MFI  # noqa : F405, band range color, HL 20, HL 80
+# Chart.add_MOM = add_MOM  # noqa : F405, (HL 0)
+# Chart.add_PPO = add_PPO  # noqa : F405, PPO + Signal + Histogram
+# Chart.add_ROC = add_ROC  # noqa : F405
+# Chart.add_ROCP = add_ROCP  # noqa : F405
+# Chart.add_ROCR = add_ROCR  # noqa : F405
+# Chart.add_ROCR100 = add_ROCR100  # noqa : F405
+# Chart.add_RSI = add_RSI  # noqa : F405, band range color, HL 30, HL 70
+# Chart.add_STOCH = add_STOCH  # noqa : F405, HL 20, HL 80
+# Chart.add_STOCHF = add_STOCHF  # noqa : F405
+# Chart.add_STOCHRSI = add_STOCHRSI  # noqa : F405
+# Chart.add_TRIX = add_TRIX  # noqa : F405, + Signal, area (HL 0)
+# Chart.add_ULTOSC = add_ULTOSC  # noqa : F405, band range color, HL 30, HL 70
+# Chart.add_WILLR = add_WILLR  # noqa : F405, band range color, HL 20, HL 80
