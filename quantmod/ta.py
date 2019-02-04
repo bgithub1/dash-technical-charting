@@ -481,21 +481,20 @@ def add_CCI(self, timeperiod=14,
                                timeperiod)
  
  
-# def add_CMO(self, timeperiod=14,
-#             type='line', color='secondary', **kwargs):
-#     """Chande Momentum Indicator."""
-#  
-#     if not self.has_close:
-#         raise Exception()
-#  
-#     utils.kwargs_check(kwargs, VALID_TA_KWARGS)
-#     if 'kind' in kwargs:
-#         type = kwargs['kind']
-#  
-#     name = 'CMO({})'.format(str(timeperiod))
-#     self.sec[name] = dict(type=type, color=color)
-#     self.ind[name] = talib.CMO(self.df[self.cl].values,
-#                                timeperiod)
+def add_CMO(self, timeperiod=14,
+            type='line', color='secondary', **kwargs):
+    """Chande Momentum Indicator."""
+  
+    if not self.has_close:
+        raise Exception()
+  
+    utils.kwargs_check(kwargs, VALID_TA_KWARGS)
+    if 'kind' in kwargs:
+        type = kwargs['kind']
+
+    name = 'CMO({})'.format(str(timeperiod))
+    self.sec[name] = dict(type=type, color=color)
+    self.ind[name] = talib.CMO(self.df,timeperiod)
  
  
 def add_ADX(self, timeperiod=14,
@@ -534,97 +533,89 @@ def add_ADX(self, timeperiod=14,
 #                                 timeperiod)
 #  
 #  
-# def add_DX(self, timeperiod=14,
-#            type='line', color='secondary', **kwargs):
-#     """Directional Movement Index."""
-#  
-#     if not (self.has_high and self.has_low and self.has_close):
-#         raise Exception()
-#  
-#     utils.kwargs_check(kwargs, VALID_TA_KWARGS)
-#     if 'kind' in kwargs:
-#         type = kwargs['kind']
-#  
-#     name = 'DX({})'.format(str(timeperiod))
-#     self.sec[name] = dict(type=type, color=color)
-#     self.ind[name] = talib.DX(self.df[self.hi].values,
-#                               self.df[self.lo].values,
-#                               self.df[self.cl].values,
-#                               timeperiod)
-#  
-#  
-# def add_MINUS_DI(self, timeperiod=14,
-#                  type='line', color='decreasing', **kwargs):
-#     """Minus Directional Indicator."""
-#  
-#     if not (self.has_high and self.has_low and self.has_close):
-#         raise Exception()
-#  
-#     utils.kwargs_check(kwargs, VALID_TA_KWARGS)
-#     if 'kind' in kwargs:
-#         type = kwargs['kind']
-#  
-#     name = 'MINUS_DI({})'.format(str(timeperiod))
-#     self.sec[name] = dict(type=type, color=color)
-#     self.ind[name] = talib.MINUS_DI(self.df[self.hi].values,
-#                                     self.df[self.lo].values,
-#                                     self.df[self.cl].values,
-#                                     timeperiod)
-#  
-#  
-# def add_PLUS_DI(self, timeperiod=14,
-#                 type='line', color='increasing', **kwargs):
-#     """Plus Directional Indicator."""
-#  
-#     if not (self.has_high and self.has_low and self.has_close):
-#         raise Exception()
-#  
-#     utils.kwargs_check(kwargs, VALID_TA_KWARGS)
-#     if 'kind' in kwargs:
-#         type = kwargs['kind']
-#  
-#     name = 'PLUS_DI({})'.format(str(timeperiod))
-#     self.sec[name] = dict(type=type, color=color)
-#     self.ind[name] = talib.PLUS_DI(self.df[self.hi].values,
-#                                    self.df[self.lo].values,
-#                                    self.df[self.cl].values,
-#                                    timeperiod)
-#  
-#  
-# def add_MINUS_DM(self, timeperiod=14,
-#                  type='line', color='decreasing', **kwargs):
-#     """Minus Directional Movement."""
-#  
-#     if not (self.has_high and self.has_low):
-#         raise Exception()
-#  
-#     utils.kwargs_check(kwargs, VALID_TA_KWARGS)
-#     if 'kind' in kwargs:
-#         type = kwargs['kind']
-#  
-#     name = 'MINUS_DM({})'.format(str(timeperiod))
-#     self.sec[name] = dict(type=type, color=color)
-#     self.ind[name] = talib.MINUS_DM(self.df[self.hi].values,
-#                                     self.df[self.lo].values,
-#                                     timeperiod)
-#  
-#  
-# def add_PLUS_DM(self, timeperiod=14,
-#                 type='line', color='increasing', **kwargs):
-#     """Plus Directional Movement."""
-#  
-#     if not (self.has_high and self.has_low):
-#         raise Exception()
-#  
-#     utils.kwargs_check(kwargs, VALID_TA_KWARGS)
-#     if 'kind' in kwargs:
-#         type = kwargs['kind']
-#  
-#     name = 'PLUS_DM({})'.format(str(timeperiod))
-#     self.sec[name] = dict(type=type, color=color)
-#     self.ind[name] = talib.PLUS_DM(self.df[self.hi].values,
-#                                    self.df[self.lo].values,
-#                                    timeperiod)
+def add_DX(self, timeperiod=14,
+           type='line', color='secondary', **kwargs):
+    """Directional Movement Index."""
+  
+    if not (self.has_high and self.has_low and self.has_close):
+        raise Exception()
+  
+    utils.kwargs_check(kwargs, VALID_TA_KWARGS)
+    if 'kind' in kwargs:
+        type = kwargs['kind']
+  
+    name = 'DX({})'.format(str(timeperiod))
+    self.sec[name] = dict(type=type, color=color)
+    self.ind[name] = talib.DX(self.df,
+                              timeperiod)
+
+  
+def add_MINUS_DI(self, timeperiod=14,
+                 type='line', color='decreasing', **kwargs):
+    """Minus Directional Indicator."""
+  
+    if not (self.has_high and self.has_low and self.has_close):
+        raise Exception()
+  
+    utils.kwargs_check(kwargs, VALID_TA_KWARGS)
+    if 'kind' in kwargs:
+        type = kwargs['kind']
+  
+    name = 'MINUS_DI({})'.format(str(timeperiod))
+    self.sec[name] = dict(type=type, color=color)
+    self.ind[name] = talib.MINUS_DI(self.df,
+                                    timeperiod)
+  
+  
+def add_PLUS_DI(self, timeperiod=14,
+                type='line', color='increasing', **kwargs):
+    """Plus Directional Indicator."""
+  
+    if not (self.has_high and self.has_low and self.has_close):
+        raise Exception()
+  
+    utils.kwargs_check(kwargs, VALID_TA_KWARGS)
+    if 'kind' in kwargs:
+        type = kwargs['kind']
+  
+    name = 'PLUS_DI({})'.format(str(timeperiod))
+    self.sec[name] = dict(type=type, color=color)
+    self.ind[name] = talib.PLUS_DI(self.df,
+                                   timeperiod)
+  
+  
+def add_MINUS_DM(self, timeperiod=14,
+                 type='line', color='decreasing', **kwargs):
+    """Minus Directional Movement."""
+  
+    if not (self.has_high and self.has_low):
+        raise Exception()
+  
+    utils.kwargs_check(kwargs, VALID_TA_KWARGS)
+    if 'kind' in kwargs:
+        type = kwargs['kind']
+  
+    name = 'MINUS_DM({})'.format(str(timeperiod))
+    self.sec[name] = dict(type=type, color=color)
+    self.ind[name] = talib.MINUS_DM(self.df,
+                                    timeperiod)
+   
+  
+def add_PLUS_DM(self, timeperiod=14,
+                type='line', color='increasing', **kwargs):
+    """Plus Directional Movement."""
+  
+    if not (self.has_high and self.has_low):
+        raise Exception()
+  
+    utils.kwargs_check(kwargs, VALID_TA_KWARGS)
+    if 'kind' in kwargs:
+        type = kwargs['kind']
+
+    name = 'PLUS_DM({})'.format(str(timeperiod))
+    self.sec[name] = dict(type=type, color=color)
+    self.ind[name] = talib.PLUS_DM(self.df,
+                                   timeperiod)
  
  
 def add_MACD(self, fastperiod=12, slowperiod=26, signalperiod=9,

@@ -9,8 +9,9 @@ import numpy as np
 def MA(df, n):  
     return df['Close'].rolling(n).mean().as_matrix().reshape(-1)
 
-def SMA(df,n):
-    return MA(df,n)
+def SMA(df,n,col='Close'):
+    sma = df[col].ewm(alpha = 1.0/n).mean().values.flatten()
+    return sma
 
 def WMA(df,n):    
     df['xy'] = df.Close*df.Volume
@@ -37,7 +38,10 @@ def ROC(df, n):
     return ROC.as_matrix().reshape(-1)
 
 #Average True Range  
-def ATR(df, n):  
+def ATR(df_in, n):  
+    df = df_in.copy()
+    df['timestamp'] = df.index
+    df.index = list(range(len(df))) 
     i = 0  
     TR_l = [0]  
     while i < df.index[-1]:  
@@ -435,7 +439,86 @@ def aroon_down(df, period):
             list(reversed(data[idx+1-period:idx+1])).index(np.min(data[idx+1-period:idx+1]))) /
             float(period)) * 100 for idx in range(period-1, len(data))]
     return a_down
+
+def rolling_sum(a, n=4) :
+    ret = np.cumsum(a,  dtype=float)
+    ret[n:] = ret[n:] - ret[:-n]
+    return ret[n - 1:]
     
+def CMO(df,period):
+    cl = df['Close'].as_matrix().reshape(-1)
+    diffs = np.diff(cl)
+    pos_diffs = np.array([d if d > 0 else 0 for d in diffs])
+    rolling_pos_sums = rolling_sum(pos_diffs,period)
+    neg_diffs = np.array([d if d < 0 else 0 for d in diffs])
+    rolling_neg_sums = rolling_sum(neg_diffs,period)
+    
+    cmo = ((rolling_pos_sums - rolling_neg_sums) / (rolling_pos_sums + rolling_neg_sums))* 100
+    return np.concatenate((np.repeat([None],period),cmo))
+    
+def PLUS_DM(df,n):
+    '''
+    +DM: if UPMOVE > DWNMOVE and UPMOVE > 0 then +DM = UPMOVE else +DM = 0
+    :param df:
+    :param n:
+    '''
+    highs = df.High.diff()
+    lows = df.Low.diff()
+    def dup(h,l):
+        if h is None:
+            return 0
+        if h <= 0:
+            return 0
+        if l >= h:
+            return 0
+        return h
+    dmplus = [dup(highs[i],lows[i]) for i in range(len(highs))]
+    return dmplus
 
+def MINUS_DM(df,n):
+    '''
+    +DM: if UPMOVE > DWNMOVE and UPMOVE > 0 then +DM = UPMOVE else +DM = 0
+    :param df:
+    :param n:
+    '''
+    highs = df.High.diff()
+    lows = df.Low.diff()
+    def ddn(h,l):
+        if l is None:
+            return 0
+        if l <= 0:
+            return 0
+        if h >= l:
+            return 0
+        return l
+    dmminus = [ddn(highs[i],lows[i]) for i in range(len(highs))]
+    return dmminus
+    
+def PLUS_DI(df,n):
+    '''
+    +DI = 100 * SMMA(+DM) / ATR
+    :param df:
+    :param n:
+    '''
+    dm = PLUS_DM(df,n)
+    df2 = pd.DataFrame({'Close':dm})
+    di = 100 * SMA(df2,n) / ATR(df,n)
+    return di
+    
+def MINUS_DI(df,n):
+    '''
+    -DI = 100 * SMMA(-DM) / ATR
+    :param df:
+    :param n:
+    '''
+    dm = MINUS_DM(df,n)
+    df2 = pd.DataFrame({'Close':dm})
+    di = 100 * SMA(df2,n) / ATR(df,n)
+    return di
 
-
+def DX(df,n):
+    diplus = PLUS_DI(df, n)
+    diminus = MINUS_DI(df, n)
+    dx = 100 * (diplus - diminus) / (diplus + diminus)
+    return dx
+    pass
