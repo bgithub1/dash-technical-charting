@@ -12,7 +12,7 @@ from dash.dependencies import Input, Output
 import dash_core_components as dcc
 import dash_html_components as html
 from flask_caching import Cache
-from lxml.html.diff import href_token
+import argparse as ap
 
 
 # In[]:
@@ -183,4 +183,9 @@ if 'DYNO' in os.environ:
 # In[]:
 # Run the Dash app_deprecated
 if __name__ == '__main__':
-    app.server.run(port=8500)
+    parser = ap.ArgumentParser()
+    parser.add_argument('--ip',type=str,default='127.0.0.1',help='ip address of server')
+    parser.add_argument('--port',type=int,default=8500,help='port of server')
+    args = parser.parse_args()
+    
+    app.server.run(host=args.ip,port=args.port)
