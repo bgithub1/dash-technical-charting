@@ -12,6 +12,7 @@ from dash.dependencies import Input, Output
 import dash_core_components as dcc
 import dash_html_components as html
 from flask_caching import Cache
+from lxml.html.diff import href_token
 
 
 # In[]:
@@ -51,10 +52,17 @@ functions = [dict(label=str(function[4:]), value=str(function))
 app.layout = html.Div(
     [
         html.Div([
-            html.H2(
+            html.H3(
                 'Dash Finance',
                 style={'padding-top': '20', 'text-align': 'center'}
             ),
+            html.Div(
+                html.Div(
+#                     html.A('Powered by Plotyly Dash',href='https://plot.ly/products/dash/',target="_blank"),
+                    html.A('Powered by Plotyly Dash. For the code to this webpage, see github',href='https://github.com/bgithub1/dash-technical-charting',target="_blank"),
+                    style={'display':'inline-block'}),
+                style={'text-align':'center'}),
+            html.H6(''),
             html.Div(
                 [
                     html.Label('Select ticker:'),

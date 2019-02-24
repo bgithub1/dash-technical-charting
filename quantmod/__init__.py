@@ -28,7 +28,6 @@ from .tools import (go_offline, go_online, is_offline,
                     reset_credentials_file)
 from .version import __version__
 
-
 __docformat__ = 'restructuredtext'
 
 
