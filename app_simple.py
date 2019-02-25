@@ -111,7 +111,8 @@ app.layout = html.Div(
         'margin-left': 'auto',
         'margin-right': 'auto',
         'font-family': 'overpass',
-        'background-color': '#F3F3F3'
+        'background-color': '#F3F3F3',
+#         'background-image': 'url("/assets/space_cartoon.png")'
     }
 )
 
