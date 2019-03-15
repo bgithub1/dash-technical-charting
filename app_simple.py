@@ -8,7 +8,7 @@ import pandas_datareader.data as web
 import pandas as pd
 import flask
 import dash
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State
 import dash_core_components as dcc
 import dash_html_components as html
 from flask_caching import Cache
@@ -26,6 +26,11 @@ app.css.append_css({'external_url': 'https://codepen.io/chriddyp/pen/bWLwgP.css'
 url_constituents = 'https://datahub.io/core/s-and-p-500-companies/r/constituents.csv'
 df_constit = pd.read_csv(url_constituents)
 
+
+buttons_grid_style = {'display': 'grid',
+  'grid-template-columns': '49.5% 49.5%',
+  'grid-gap': '1px'
+}
 # In[]:
 # Put your Dash code here
 
@@ -38,10 +43,20 @@ spydr_sector_names = ['SPY','XLE','XLU','XLK','XLB','XLP','XLY','XLI','XLC','XLV
 spydr_short_names = list(df_constit.Symbol)
 
 sp500 = spydr_short_names
+initial_tickers = sp500 + spydr_sector_names
+def get_tickers():
+    global initial_tickers
+    tickers = initial_tickers #sp500 + spydr_sector_names
+    tickers = sorted(tickers)
+    tickers = [dict(label=str(ticker), value=str(ticker))
+               for ticker in tickers]
+    return tickers
 
-tickers = sp500 + spydr_sector_names
-tickers = [dict(label=str(ticker), value=str(ticker))
-           for ticker in tickers]
+def put_tickers(ticker):
+    global initial_tickers
+    new_it = initial_tickers.copy()
+    new_it.append(ticker)
+    initial_tickers = list(set(new_it))
 
 # Dynamic binding
 functions = list(filter(lambda s: 'add_' in s.lower(),dir(qm.ta)))
@@ -63,34 +78,41 @@ app.layout = html.Div(
                     style={'display':'inline-block'}),
                 style={'text-align':'center'}),
             html.H6(''),
-            html.Div(
-                [
-                    html.Label('Select ticker:'),
-                    dcc.Dropdown(
-                        id='dropdown',
-                        options=tickers,
-                        value='SPY',
+            html.Div([
+                    html.Div(
+                        [
+                            html.Label('Select ticker:'),
+        #                     dcc.Dropdown(
+        #                         id='dropdown',
+        #                         options=get_tickers(),#tickers,
+        #                         value='SPY',
+        #                     ),
+                            dcc.Input(
+                                id='dropdown',
+                                value='SPY',
+                                type='text'
+                            ),
+                        ],
+                        style={
+                            'width': '510', 'display': 'inline-block',
+                            'padding-left': '40', 'margin-bottom': '20'}
+                    ),
+                    html.Div(
+                        [
+                            html.Label('Select technical indicators:'),
+                            dcc.Dropdown(
+                                id='multi',
+                                options=functions,
+                                multi=True,
+                                value=['add_MA'],
+                            ),
+                        ],
+                        style={
+                            'width': '510', 'display': 'inline-block',
+                            'padding-right': '40', 'margin-bottom': '20'}
                     ),
                 ],
-                style={
-                    'width': '510', 'display': 'inline-block',
-                    'padding-left': '40', 'margin-bottom': '20'}
-            ),
-            html.Div(
-                [
-                    html.Label('Select technical indicators:'),
-                    dcc.Dropdown(
-                        id='multi',
-                        options=functions,
-                        multi=True,
-#                         value=['add_BBANDS', 'add_RSI', 'add_MACD'],
-                        value=['add_MA'],
-                    ),
-                ],
-                style={
-                    'width': '510', 'display': 'inline-block',
-                    'padding-right': '40', 'margin-bottom': '20'}
-            ),
+                     style=buttons_grid_style),
         ]),
         html.Div(
             [
@@ -125,13 +147,27 @@ def display_control(multi):
 
 
 @cache.memoize(timeout=timeout)
-@app.callback(Output('output', 'figure'), [Input('dropdown', 'value'),
-                                           Input('multi', 'value'),
-                                           Input('arglist', 'value')])
-def update_graph_from_dropdown(dropdown, multi, arglist):
- 
-    # Get Quantmod Chart
-    df = web.DataReader(dropdown, 'yahoo', dt.datetime(2016, 1, 1), dt.datetime.now())
+@app.callback(Output('output', 'figure'), 
+              [
+#                   Input('dropdown', 'value'),
+                  Input('dropdown', 'n_submit'),
+                  Input('multi', 'value'),
+                  Input('arglist', 'value')
+              ],
+              [
+                  State('dropdown','value')
+                  ])
+def update_graph_from_dropdown(dropdown_nsub, multi, arglist,dropdown):
+    if dropdown is None or len(dropdown)<=0:
+        return None
+    if len(dropdown.split('.'))>1:
+        df = fetch_ib_history(dropdown)
+    else:
+        df = web.DataReader(dropdown, 'yahoo', dt.datetime(2016, 1, 1), dt.datetime.now())
+    if df is None or len(df)<=0:        
+        print(f'update_graph_from_dropdown: no data for {dropdown}')
+        return None
+    print(df.tail())
     print('Loading')
     ch = qm.Chart(df)
  
@@ -167,7 +203,24 @@ def update_graph_from_dropdown(dropdown, multi, arglist):
     return fig
 
 
-
+def fetch_ib_history(contract,days_back=120,time_period=86400000,currency='USD'):
+    c  = contract.upper()
+    url = f"http://127.0.0.1:8899/ibhistory?{time_period}%20{days_back}%200%205%20{c}"
+    df = pd.read_csv(url)
+    if df is not None and len(df)>0:
+        
+        df.index= df.dateTime.apply(
+            lambda yyyymmdd: '%04d-%02d-%02d' %(
+                                                int(str(yyyymmdd)[0:4]),
+                                                int(str(yyyymmdd)[4:6]),
+                                                int(str(yyyymmdd)[6:8])
+                                                )
+            )
+        df.index.name = 'Date'
+        df = df.rename(columns={'open':'Open','high':'High','low':'Low','close':'Close','adjusted':'Adj Close','volume':'Volume'})
+        df = df[['Open','High','Low','Close','Adj Close','Volume']]
+    return df
+    
 
 external_css = ["https://fonts.googleapis.com/css?family=Overpass:400,400i,700,700i",
                 "https://cdn.rawgit.com/plotly/dash-app_deprecated-stylesheets/c6a126a684eaaa94a708d41d6ceb32b28ac78583/dash-technical-charting.css"]
