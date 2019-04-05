@@ -1,5 +1,12 @@
 # In[]:
 # Import required libraries
+import sys
+if  not './' in sys.path:
+    sys.path.append('./')
+if  not '../' in sys.path:
+    sys.path.append('../')
+import barchart_api as bcapi
+
 import os
 import datetime as dt
 
@@ -13,7 +20,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 from flask_caching import Cache
 import argparse as ap
-
+import datetime,pytz
 
 # In[]:
 # Setup the app_deprecated
@@ -44,6 +51,55 @@ spydr_short_names = list(df_constit.Symbol)
 
 sp500 = spydr_short_names
 initial_tickers = sp500 + spydr_sector_names
+
+class BarChartAccess():
+    def __init__(self):
+        self.api_key = open('./temp_folder/free_api_key.txt','r').read()
+        self.bar_type = 'daily' 
+        self.interval = 1
+        self.endpoint_type = 'free_url'
+        self.bch = bcapi.BcHist(self.api_key, bar_type=self.bar_type, interval=self.interval,endpoint_type = self.endpoint_type)
+
+    def fetch_history(self,symbol,dt_beg,dt_end):
+        y = dt_beg.year 
+        m = dt_beg.month 
+        d = dt_beg.day 
+        beg_yyyymmdd = '%04d%02d%02d' %(y,m,d)
+        y = dt_end.year 
+        m = dt_end.month 
+        d = dt_end.day 
+        end_yyyymmdd = '%04d%02d%02d' %(y,m,d)
+        tup = self.bch.get_history(symbol, beg_yyyymmdd, end_yyyymmdd)
+        df = tup[1]
+        cols = df.columns.values 
+        cols_dict = {c:c[0].lower() + c[1:] for c in cols}
+        df = df.rename(columns = cols_dict)
+        # make date col
+        def _make_date(t):
+            y = int(t[0:4])
+            mon = int(t[5:7])
+            d = int(t[8:10])
+            h = int(t[11:13])
+            minute = int(t[14:16])
+            dt = datetime.datetime(y,mon,d,h,minute,tzinfo=pytz.timezone('US/Eastern'))
+            return dt 
+        df['date'] = df.timestamp.apply(_make_date)
+        df = df.drop(['timestamp'],axis=1)
+#         self.history_dict[symbol] = df
+        # make yahoo-like
+        def __make_dt(d):
+            y = int(str(d)[0:4])
+            m = int(str(d)[5:7])
+            d = int(str(d)[8:10])
+            return datetime.datetime(y,m,d)
+        df.index = df.tradingDay.apply(__make_dt)
+        df = df.rename(columns = {c:c[0].upper()+ ('' if len(c)==1 else c[1:]) for c in df.columns.values})
+        df = df[['Open','High','Low','Close','Volume']]       
+        return df        
+
+
+bca = BarChartAccess()
+
 def get_tickers():
     global initial_tickers
     tickers = initial_tickers #sp500 + spydr_sector_names
@@ -158,12 +214,20 @@ def display_control(multi):
                   State('dropdown','value')
                   ])
 def update_graph_from_dropdown(dropdown_nsub, multi, arglist,dropdown):
+    df = None
     if dropdown is None or len(dropdown)<=0:
         return None
     if len(dropdown.split('.'))>1:
         df = fetch_ib_history(dropdown)
     else:
-        df = web.DataReader(dropdown, 'yahoo', dt.datetime(2016, 1, 1), dt.datetime.now())
+        try:
+            df = web.DataReader(dropdown, 'yahoo', dt.datetime(2016, 1, 1), dt.datetime.now())
+        except Exception as e:
+            try:
+                df = bca.fetch_history(dropdown, dt.datetime(2016, 1, 1), dt.datetime.now())
+            except Exception:
+                pass
+            
     if df is None or len(df)<=0:        
         print(f'update_graph_from_dropdown: no data for {dropdown}')
         return None
