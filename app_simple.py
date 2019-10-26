@@ -25,7 +25,7 @@ import datetime,pytz
 # In[]:
 # Setup the app_deprecated
 server = flask.Flask(__name__)
-app = dash.Dash(__name__)
+app = dash.Dash(__name__,url_base_pathname='/dtc/')
 
 app.scripts.config.serve_locally = False
 app.css.append_css({'external_url': 'https://codepen.io/chriddyp/pen/bWLwgP.css'})
